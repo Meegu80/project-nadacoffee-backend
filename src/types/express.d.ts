@@ -1,7 +1,7 @@
-import { User } from '@prisma/client';
+import { Member } from '@prisma/client';
 
 // Prisma User 모델을 그대로 사용하거나, Password를 뺀 타입을 사용
-export type UserPayload = User;
+export type UserPayload = Member;
 
 declare global {
     namespace Express {
