@@ -1,6 +1,6 @@
 import { Strategy as JwtStrategy, ExtractJwt, VerifiedCallback } from "passport-jwt";
 import { prisma } from "./prisma";
-import { User } from "@prisma/client";
+import { Member } from "@prisma/client";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
@@ -19,7 +19,7 @@ export const jwtStrategy = new JwtStrategy(
     opts,
     async (jwt_payload: JwtPayload, done: VerifiedCallback) => {
         try {
-            const user: User | null = await prisma.user.findUnique({
+            const user: Member | null = await prisma.member.findUnique({
                 where: { id: jwt_payload.id },
             });
 
