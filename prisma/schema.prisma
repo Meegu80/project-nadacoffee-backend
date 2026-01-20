@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum MemberGrade {
+  SILVER
+  GOLD
+  VIP
+}
+
+enum MemberStatus {
+  ACTIVE
+  DORMANT
+  WITHDRAWN
+}
+
+model Member {
+  id        Int          @id @default(autoincrement())
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  email     String       @unique
+  password  String
+  name      String
+  phone     String
+  grade     MemberGrade  @default(SILVER)
+  status    MemberStatus @default(ACTIVE)
+  role      Role
+}
