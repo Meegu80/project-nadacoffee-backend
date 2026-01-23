@@ -8,6 +8,8 @@ import authRoute from "./routes/auth.route";
 import adminMemberRoute from "./routes/admin.member.route";
 import { validateClientKey } from "./middlewares/clientAuth.middleware";
 import { errorMiddleware } from "./middlewares/error.middleware";
+import categoryRouter from "./routes/category.route";
+import adminCategoryRouter from "./routes/admin.category.route";
 
 const app = express();
 const PORT = process.env.PORT || 4101;
@@ -25,6 +27,8 @@ app.use(`/${API_DOCS_ROUTE}`, swaggerUi.serve, swaggerUi.setup(swaggerOptions));
 app.use(validateClientKey);
 app.use("/api/auth", authRoute);
 app.use("/api/admin", adminMemberRoute);
+app.use("/api/admin/categories", adminCategoryRouter);
+app.use("/api/categories", categoryRouter);
 
 app.use(errorMiddleware);
 

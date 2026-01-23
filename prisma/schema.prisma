@@ -25,6 +25,17 @@ enum MemberStatus {
   WITHDRAWN
 }
 
+enum PaymentStatus {
+  PAID
+  CANCELLED
+  FAILED
+}
+
+enum InquiryStatus {
+  PENDING
+  ANSWERED
+}
+
 model Member {
   id        Int          @id @default(autoincrement())
   createdAt DateTime     @default(now())
@@ -36,4 +47,182 @@ model Member {
   grade     MemberGrade  @default(SILVER)
   status    MemberStatus @default(ACTIVE)
   role      Role
+
+  addresses Address[]
+  orders    Order[]
+  points    PointLog[]
+  reviews   Review[]
+  inquiries Inquiry[]
+}
+
+model Category {
+  id        Int      @id @default(autoincrement()) @map("cat_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt
+  parentId  Int?     @map("parent_id")
+  name      String   @map("cat_name") @db.VarChar(50)
+  depth     Int      @default(1)
+  sortOrder Int      @default(0) @map("sort_order")
+
+  parent     Category?  @relation("CategoryToChildren", fields: [parentId], references: [id], onDelete: SetNull)
+  categories Category[] @relation("CategoryToChildren")
+  products   Product[]
+
+  @@map("categories")
+}
+
+model Address {
+  id         Int      @id @default(autoincrement()) @map("address_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt
+  recipient  String   @db.VarChar(50)
+  zipCode    String   @map("zip_code") @db.VarChar(10)
+  baseAddr   String   @map("base_addr") @db.VarChar(255)
+  detailAddr String   @map("detail_addr") @db.VarChar(255)
+  isDefault  Boolean  @default(false) @map("is_default")
+
+  memberId Int    @map("member_id")
+  member   Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+}
+
+model Product {
+  id        Int      @id @default(autoincrement()) @map("prod_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt
+  name      String   @db.VarChar(255)
+  summary   String?  @db.VarChar(500)
+  basePrice Int      @map("base_price")
+  imageUrl  String?  @map("image_url")
+  isDisplay Boolean  @default(true) @map("is_display")
+
+  catId      Int          @map("cat_id")
+  category   Category     @relation(fields: [catId], references: [id])
+  options    ProdOption[]
+  orderItems OrderItem[]
+  reviews    Review[]
+
+  @@map("products")
+}
+
+model ProdOption {
+  id        Int      @id @default(autoincrement()) @map("opt_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt
+  name      String   @map("opt_name") @db.VarChar(100)
+  value     String   @map("opt_value") @db.VarChar(100)
+  addPrice  Int      @default(0) @map("add_price")
+  stockQty  Int      @default(0) @map("stock_qty")
+
+  prodId     Int         @map("prod_id")
+  product    Product     @relation(fields: [prodId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
+
+  @@map("prod_options")
+}
+
+model Order {
+  id         Int      @id @default(autoincrement()) @map("address_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt
+  totalPrice Int      @map("total_price")
+  status     String   @default("결제대기") @db.VarChar(20)
+
+  memberId   Int         @map("member_id")
+  member     Member      @relation(fields: [memberId], references: [id])
+  orderItems OrderItem[]
+  payments   Payment[]
+  pointLogs  PointLog[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        Int      @id @default(autoincrement()) @map("address_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt
+  quantity  Int
+  salePrice Int      @map("sale_price")
+
+  orderId  Int        @map("order_id")
+  order    Order      @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  prodId   Int        @map("prod_id")
+  product  Product    @relation(fields: [prodId], references: [id])
+  optionId Int        @map("option_id")
+  option   ProdOption @relation(fields: [optionId], references: [id])
+
+  @@map("order_items")
+}
+
+model Payment {
+  id        Int           @id @default(autoincrement()) @map("address_id")
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt
+  method    String        @map("pay_method") @db.VarChar(30)
+  pgTid     String?       @map("pg_tid") @db.VarChar(100)
+  amount    Int           @map("pay_amount")
+  status    PaymentStatus @default(PAID) @map("pay_status")
+  paidAt    DateTime      @default(now()) @map("paid_at")
+
+  orderId Int   @map("order_id")
+  order   Order @relation(fields: [orderId], references: [id])
+
+  @@map("payments")
+}
+
+model PointLog {
+  id        Int      @id @default(autoincrement()) @map("address_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt
+  amount    Int
+  reason    String   @db.VarChar(255)
+
+  memberId Int    @map("member_id")
+  member   Member @relation(fields: [memberId], references: [id])
+  orderId  Int?   @map("order_id")
+  Order    Order? @relation(fields: [orderId], references: [id])
+
+  @@map("point_logs")
+}
+
+model Review {
+  id        Int      @id @default(autoincrement()) @map("address_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt
+  rating    Int      @db.TinyInt
+  content   String   @db.Text
+  imageUrl  String?  @map("image_url") @db.Text
+
+  memberId Int     @map("member_id")
+  member   Member  @relation(fields: [memberId], references: [id])
+  prodId   Int     @map("prod_id")
+  product  Product @relation(fields: [prodId], references: [id])
+}
+
+model Inquiry {
+  id         Int           @id @default(autoincrement()) @map("inq_id")
+  createdAt  DateTime      @default(now()) @map("created_at")
+  updatedAt  DateTime      @updatedAt
+  title      String        @db.VarChar(255)
+  content    String        @map("q_content") @db.Text
+  answer     String?       @map("ans_content") @db.Text
+  status     InquiryStatus @default(PENDING)
+  answeredAt DateTime?     @map("answered_at")
+
+  memberId Int    @map("member_id")
+  member   Member @relation(fields: [memberId], references: [id])
+
+  @@map("inquiries")
+}
+
+model Event {
+  id        Int      @id @default(autoincrement()) @map("evt_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt
+  title     String   @db.VarChar(255)
+  bannerUrl String?  @map("banner_url") @db.Text
+  startAt   DateTime @map("start_at") @db.DateTime
+  endAt     DateTime @map("end_at") @db.DateTime
+  isActive  Boolean  @default(true) @map("is_active")
+
+  @@map("events")
 }
