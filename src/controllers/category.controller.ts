@@ -5,7 +5,6 @@ import { CategoryService } from "../services/category.service";
 const categoryService = new CategoryService();
 
 export class CategoryController {
-    // 전체 트리 조회
     async getCategories(req: Request, res: Response, next: NextFunction) {
         try {
             const categories = await categoryService.getCategoryTree();
@@ -18,7 +17,6 @@ export class CategoryController {
         }
     }
 
-    // 단일 조회
     async getCategory(req: Request, res: Response, next: NextFunction) {
         try {
             const id = Number(req.params.id);

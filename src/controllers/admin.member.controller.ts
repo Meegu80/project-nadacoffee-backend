@@ -1,13 +1,12 @@
-import { Request, Response, NextFunction } from 'express';
-import { AdminMemberService } from "../services/admin.user.service";
+import { Request, Response, NextFunction } from "express";
+import { AdminMemberService } from "../services/admin.member.service";
 
 const adminMemberService = new AdminMemberService();
 
 export class AdminMemberController {
     async getMembers(req: Request, res: Response, next: NextFunction) {
         try {
-            const page = Number(req.query.page) || 1;
-            const limit = Number(req.query.limit) || 10;
+            const { page, limit } = req.query as any;
 
             const result = await adminMemberService.getMembers(page, limit);
 
@@ -30,7 +29,7 @@ export class AdminMemberController {
     async createMember(req: Request, res: Response, next: NextFunction) {
         try {
             const user = await adminMemberService.createMember(req.body);
-            res.status(201).json({ message: '회원 생성 성공', data: user });
+            res.status(201).json({ message: "회원 생성 성공", data: user });
         } catch (error) {
             next(error);
         }
@@ -40,7 +39,7 @@ export class AdminMemberController {
         try {
             const userId = Number(req.params.id);
             const user = await adminMemberService.updateMember(userId, req.body);
-            res.status(200).json({ message: '회원 정보 수정 성공', data: user });
+            res.status(200).json({ message: "회원 정보 수정 성공", data: user });
         } catch (error) {
             next(error);
         }

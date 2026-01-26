@@ -1,20 +1,9 @@
 import { prisma } from "../config/prisma";
 import { HttpException } from "../utils/exception.utils";
-
-interface CreateCategoryDto {
-    name: string;
-    parentId?: number;
-    sortOrder?: number;
-}
-
-interface UpdateCategoryDto {
-    name?: string;
-    parentId?: number;
-    sortOrder?: number;
-}
+import { CreateCategoryInput, UpdateCategoryInput } from "../schemas/admin.category.schema";
 
 export class AdminCategoryService {
-    async createCategory(data: CreateCategoryDto) {
+    async createCategory(data: CreateCategoryInput) {
         let depth = 1;
 
         if (data.parentId) {
@@ -31,14 +20,14 @@ export class AdminCategoryService {
         return await prisma.category.create({
             data: {
                 name: data.name,
-                parentId: data.parentId || null,
+                parentId: data.parentId ?? null, // undefined일 경우 null 처리
                 depth: depth,
-                sortOrder: data.sortOrder || 0,
+                sortOrder: data.sortOrder ?? 0,
             },
         });
     }
 
-    async updateCategory(id: number, data: UpdateCategoryDto) {
+    async updateCategory(id: number, data: UpdateCategoryInput) {
         const existingCategory = await prisma.category.findUnique({
             where: { id },
         });
@@ -48,6 +37,8 @@ export class AdminCategoryService {
         }
 
         let depth = existingCategory.depth;
+
+        // parentId가 undefined가 아니고(값 변경 시도), 기존 값과 다를 때만 로직 수행
         if (data.parentId !== undefined && data.parentId !== existingCategory.parentId) {
             if (data.parentId === null) {
                 depth = 1;

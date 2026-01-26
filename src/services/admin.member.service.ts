@@ -1,27 +1,8 @@
 import bcrypt from "bcryptjs";
-import { MemberGrade, MemberStatus, Role } from "@prisma/client";
+import { Role } from "@prisma/client";
 import { prisma } from "../config/prisma";
 import { HttpException } from "../utils/exception.utils";
-
-interface CreateMemberDto {
-    name: string;
-    email: string;
-    password: string;
-    phone: string;
-    grade: MemberGrade;
-    status: MemberStatus;
-    role?: Role;
-}
-
-interface UpdateMemberDto {
-    name?: string;
-    email?: string;
-    password?: string;
-    phone?: string;
-    grade?: MemberGrade;
-    status?: MemberStatus;
-    role?: Role;
-}
+import { CreateMemberInput, UpdateMemberInput } from "../schemas/admin.member.schema";
 
 export class AdminMemberService {
     async getMembers(page: number, limit: number) {
@@ -67,7 +48,7 @@ export class AdminMemberService {
         return userWithoutPassword;
     }
 
-    async createMember(data: CreateMemberDto) {
+    async createMember(data: CreateMemberInput) {
         const existingUser = await prisma.member.findUnique({
             where: { email: data.email },
         });
@@ -94,7 +75,7 @@ export class AdminMemberService {
         return userWithoutPassword;
     }
 
-    async updateMember(userId: number, data: UpdateMemberDto) {
+    async updateMember(userId: number, data: UpdateMemberInput) {
         const user = await prisma.member.findUnique({ where: { id: userId } });
         if (!user) throw new HttpException(404, "해당 회원을 찾을 수 없습니다.");
 
