@@ -14,6 +14,7 @@ import "./schemas/admin.category.schema";
 import "./schemas/admin.member.schema";
 import "./schemas/auth.schema";
 import "./schemas/category.schema";
+import memberRouter from "./routes/member.route";
 
 const app = express();
 const PORT = process.env.PORT || 4101;
@@ -40,6 +41,7 @@ app.use(validateClientKey);
 app.use("/api/auth", authRoute);
 app.use("/api/admin", adminMemberRoute);
 app.use("/api/admin/categories", adminCategoryRouter);
+app.use("/api/members", memberRouter);
 app.use("/api/categories", categoryRouter);
 
 app.use(errorMiddleware);

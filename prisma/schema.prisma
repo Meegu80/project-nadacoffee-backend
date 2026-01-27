@@ -56,7 +56,7 @@ model Member {
 }
 
 model Category {
-  id        Int      @id @default(autoincrement()) @map("cat_id")
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt
   parentId  Int?     @map("parent_id")
@@ -72,7 +72,7 @@ model Category {
 }
 
 model Address {
-  id         Int      @id @default(autoincrement()) @map("address_id")
+  id         Int      @id @default(autoincrement())
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt
   recipient  String   @db.VarChar(50)
@@ -86,7 +86,7 @@ model Address {
 }
 
 model Product {
-  id        Int      @id @default(autoincrement()) @map("prod_id")
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt
   name      String   @db.VarChar(255)
@@ -105,7 +105,7 @@ model Product {
 }
 
 model ProdOption {
-  id        Int      @id @default(autoincrement()) @map("opt_id")
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt
   name      String   @map("opt_name") @db.VarChar(100)
@@ -121,7 +121,7 @@ model ProdOption {
 }
 
 model Order {
-  id         Int      @id @default(autoincrement()) @map("address_id")
+  id         Int      @id @default(autoincrement())
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt
   totalPrice Int      @map("total_price")
@@ -137,7 +137,7 @@ model Order {
 }
 
 model OrderItem {
-  id        Int      @id @default(autoincrement()) @map("address_id")
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt
   quantity  Int
@@ -154,7 +154,7 @@ model OrderItem {
 }
 
 model Payment {
-  id        Int           @id @default(autoincrement()) @map("address_id")
+  id        Int           @id @default(autoincrement())
   createdAt DateTime      @default(now()) @map("created_at")
   updatedAt DateTime      @updatedAt
   method    String        @map("pay_method") @db.VarChar(30)
@@ -170,7 +170,7 @@ model Payment {
 }
 
 model PointLog {
-  id        Int      @id @default(autoincrement()) @map("address_id")
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt
   amount    Int
@@ -185,7 +185,7 @@ model PointLog {
 }
 
 model Review {
-  id        Int      @id @default(autoincrement()) @map("address_id")
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt
   rating    Int      @db.TinyInt
@@ -196,10 +196,12 @@ model Review {
   member   Member  @relation(fields: [memberId], references: [id])
   prodId   Int     @map("prod_id")
   product  Product @relation(fields: [prodId], references: [id])
+
+  @@map("reviews")
 }
 
 model Inquiry {
-  id         Int           @id @default(autoincrement()) @map("inq_id")
+  id         Int           @id @default(autoincrement())
   createdAt  DateTime      @default(now()) @map("created_at")
   updatedAt  DateTime      @updatedAt
   title      String        @db.VarChar(255)
@@ -215,7 +217,7 @@ model Inquiry {
 }
 
 model Event {
-  id        Int      @id @default(autoincrement()) @map("evt_id")
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt
   title     String   @db.VarChar(255)
