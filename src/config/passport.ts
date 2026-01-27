@@ -20,7 +20,7 @@ export const jwtStrategy = new JwtStrategy(
     async (jwt_payload: JwtPayload, done: VerifiedCallback) => {
         try {
             const user: Member | null = await prisma.member.findUnique({
-                where: { id: jwt_payload.id },
+                where: { id: Number(jwt_payload.id) },
             });
 
             if (user) {
