@@ -16,13 +16,17 @@ export const CategorySchema = z
 
 export const createCategoryBodySchema = z.object({
     name: z.string().min(1, "카테고리 이름은 필수입니다.").openapi({ example: "에티오피아" }),
-    parentId: z.number().optional().openapi({ example: 1, description: "상위 카테고리 ID" }),
+    parentId: z
+        .number()
+        .nullable()
+        .optional()
+        .openapi({ example: 1, description: "상위 카테고리 ID (없으면 null)" }),
     sortOrder: z.number().optional().openapi({ example: 1 }),
 });
 
 export const updateCategoryBodySchema = z.object({
     name: z.string().optional().openapi({ example: "수정된 이름" }),
-    parentId: z.number().optional().nullable(),
+    parentId: z.number().nullable().optional().openapi({ example: null }),
     sortOrder: z.number().optional(),
 });
 
