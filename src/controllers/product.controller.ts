@@ -6,8 +6,14 @@ const productService = new ProductService();
 export class ProductController {
     async getProducts(req: Request, res: Response, next: NextFunction) {
         try {
-            // isDisplay가 포함된 쿼리를 서비스로 전달
-            const result = await productService.getProducts(req.query as any);
+            const page = Number(req.query.page) || 1;
+            const limit = Number(req.query.limit) || 10;
+            const queryParams = {
+                ...req.query,
+                page,
+                limit,
+            };
+            const result = await productService.getProducts(queryParams as any);
             res.status(200).json(result);
         } catch (error) {
             next(error);
