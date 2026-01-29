@@ -6,15 +6,18 @@ import authRoute from "./routes/auth.route";
 import adminMemberRoute from "./routes/admin.member.route";
 import { validateClientKey } from "./middlewares/clientAuth.middleware";
 import { errorMiddleware } from "./middlewares/error.middleware";
-import categoryRouter from "./routes/category.route";
-import adminCategoryRouter from "./routes/admin.category.route";
+import categoryRoute from "./routes/category.route";
+import adminCategoryRoute from "./routes/admin.category.route";
 import { generateOpenApiDocs } from "./config/openApi";
 import { apiReference } from "@scalar/express-api-reference";
 import "./schemas/admin.category.schema";
 import "./schemas/admin.member.schema";
 import "./schemas/auth.schema";
 import "./schemas/category.schema";
-import memberRouter from "./routes/member.route";
+import memberRoute from "./routes/member.route";
+import uploadRoute from "./routes/upload.route";
+import productRoute from "./routes/product.route";
+import adminProductRoute from "./routes/admin.product.route";
 
 const app = express();
 const PORT = process.env.PORT || 4101;
@@ -38,11 +41,15 @@ app.use(
 );
 
 app.use(validateClientKey);
+
+app.use("/api/uploads", uploadRoute);
 app.use("/api/auth", authRoute);
+app.use("/api/members", memberRoute);
+app.use("/api/categories", categoryRoute);
+app.use("/api/products", productRoute);
 app.use("/api/admin", adminMemberRoute);
-app.use("/api/admin/categories", adminCategoryRouter);
-app.use("/api/members", memberRouter);
-app.use("/api/categories", categoryRouter);
+app.use("/api/admin/categories", adminCategoryRoute);
+app.use("/api/admin/products", adminProductRoute);
 
 app.use(errorMiddleware);
 
