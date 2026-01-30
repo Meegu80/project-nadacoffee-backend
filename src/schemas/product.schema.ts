@@ -41,10 +41,12 @@ export const ProductResponseSchema = z
 export const productListQuerySchema = PaginationQuerySchema.extend({
     catId: z.coerce.number().optional().openapi({ description: "카테고리 ID" }),
     search: z.string().optional().openapi({ description: "검색어" }),
-
-    // [수정] isDisplay를 쿼리 파라미터로 명시적으로 받음 ("true" or "false")
     isDisplay: z.enum(["true", "false"]).optional().openapi({
         description: "진열 여부 필터 (true: 진열됨, false: 숨김, 미전송: 전체)",
+    }),
+    sort: z.enum(["latest", "price_asc", "price_desc"]).default("latest").optional().openapi({
+        description: "정렬 기준 (기본값: latest)",
+        example: "price_asc",
     }),
 });
 

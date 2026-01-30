@@ -5,25 +5,28 @@ import { ProductListQuery } from "../schemas/product.schema";
 export class ProductService {
     // 상품 목록 조회
     async getProducts(query: ProductListQuery) {
-        const { page, limit, catId, search, isDisplay } = query;
+        const { page, limit, catId, search, isDisplay, sort } = query;
         const skip = (page - 1) * limit;
 
         const where: any = {};
 
-        // 1. 카테고리 필터
         if (catId) {
             where.catId = catId;
         }
 
-        // 2. 검색어 필터
         if (search) {
             where.name = { contains: search };
         }
 
-        // 3. [수정] 진열 여부 필터 (요청이 있을 때만 적용)
         if (isDisplay) {
-            // 쿼리 스트링 "true"/"false"를 boolean으로 변환
             where.isDisplay = isDisplay === "true";
+        }
+
+        let orderBy: any = { createdAt: "desc" };
+        if (sort === "price_asc") {
+            orderBy = { basePrice: "asc" };
+        } else if (sort === "price_desc") {
+            orderBy = { basePrice: "desc" };
         }
 
         const [total, products] = await prisma.$transaction([
@@ -32,7 +35,7 @@ export class ProductService {
                 where,
                 skip,
                 take: limit,
-                orderBy: { createdAt: "desc" },
+                orderBy,
                 include: {
                     category: { select: { id: true, name: true } },
                     options: true, // 목록에서도 옵션 정보가 필요할 수 있음
