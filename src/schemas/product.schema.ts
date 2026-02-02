@@ -65,7 +65,7 @@ export type ProductListQuery = z.infer<typeof productListQuerySchema>;
 registry.registerPath({
     method: "get",
     path: "/api/products",
-    tags: ["Product (Public)"],
+    tags: ["Products"],
     summary: "상품 목록 조회",
     description: "검색어, 카테고리, 진열 여부(isDisplay) 등을 조합하여 상품을 조회합니다.",
     request: {
@@ -86,7 +86,7 @@ registry.registerPath({
 registry.registerPath({
     method: "get",
     path: "/api/products/{id}",
-    tags: ["Product (Public)"],
+    tags: ["Products"],
     summary: "상품 상세 조회",
     request: {
         params: productIdParamSchema,

@@ -49,6 +49,7 @@ model Member {
   role      Role
 
   addresses Address[]
+  cartItems Cart[]
   orders    Order[]
   points    PointLog[]
   reviews   Review[]
@@ -98,6 +99,7 @@ model Product {
   catId      Int          @map("cat_id")
   category   Category     @relation(fields: [catId], references: [id])
   options    ProdOption[]
+  cartItems  Cart[]
   orderItems OrderItem[]
   reviews    Review[]
 
@@ -115,17 +117,44 @@ model ProdOption {
 
   prodId     Int         @map("prod_id")
   product    Product     @relation(fields: [prodId], references: [id], onDelete: Cascade)
+  cartItems  Cart[]
   orderItems OrderItem[]
 
   @@map("prod_options")
 }
 
+model Cart {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt
+  quantity  Int      @default(1)
+
+  memberId Int        @map("member_id")
+  member   Member     @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  prodId   Int        @map("prod_id")
+  product  Product    @relation(fields: [prodId], references: [id], onDelete: Cascade)
+  optionId Int        @map("option_id")
+  option   ProdOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+
+  @@map("carts")
+}
+
 model Order {
-  id         Int      @id @default(autoincrement())
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt
-  totalPrice Int      @map("total_price")
-  status     String   @default("결제대기") @db.VarChar(20)
+  id               Int      @id @default(autoincrement())
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt
+  totalPrice       Int      @map("total_price")
+  status           String   @default("결제대기") @db.VarChar(20)
+  recipientName    String   @map("recipient_name") @db.VarChar(50)
+  recipientPhone   String   @map("recipient_phone") @db.VarChar(20)
+  zipCode          String   @map("zip_code") @db.VarChar(10)
+  address1         String   @map("base_addr") @db.VarChar(255)
+  address2         String   @map("detail_addr") @db.VarChar(255)
+  deliveryMessage  String?  @map("delivery_message") @db.VarChar(500)
+  entrancePassword String?  @map("entrance_password") @db.VarChar(100)
+  usedPoint        Int      @default(0) @map("used_point")
+  deliveryCompany  String?  @map("delivery_company") @db.VarChar(50)
+  trackingNumber   String?  @map("tracking_number") @db.VarChar(100)
 
   memberId   Int         @map("member_id")
   member     Member      @relation(fields: [memberId], references: [id])

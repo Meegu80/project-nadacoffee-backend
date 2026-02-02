@@ -51,7 +51,7 @@ export type ChangePasswordInput = z.infer<typeof changePasswordBodySchema>;
 registry.registerPath({
     method: "get",
     path: "/api/members/me",
-    tags: ["Member (User)"],
+    tags: ["Members"],
     summary: "내 정보 조회",
     security: [{ bearerAuth: [] }],
     responses: {
@@ -72,7 +72,7 @@ registry.registerPath({
 registry.registerPath({
     method: "put",
     path: "/api/members/me",
-    tags: ["Member (User)"],
+    tags: ["Members"],
     summary: "내 정보 수정 (이름, 전화번호)",
     security: [{ bearerAuth: [] }],
     request: {
@@ -100,7 +100,7 @@ registry.registerPath({
 registry.registerPath({
     method: "patch",
     path: "/api/members/me/password",
-    tags: ["Member (User)"],
+    tags: ["Members"],
     summary: "비밀번호 변경",
     description: "현재 비밀번호를 확인 후 새 비밀번호로 변경합니다.",
     security: [{ bearerAuth: [] }],

@@ -58,7 +58,7 @@ export type UpdateProductInput = z.infer<typeof updateProductBodySchema>;
 registry.registerPath({
     method: "post",
     path: "/api/admin/products",
-    tags: ["Admin Product"],
+    tags: ["Admin/Products"],
     summary: "상품 등록",
     security: [{ bearerAuth: [] }],
     request: {
@@ -80,7 +80,7 @@ registry.registerPath({
 registry.registerPath({
     method: "put",
     path: "/api/admin/products/{id}",
-    tags: ["Admin Product"],
+    tags: ["Admin/Products"],
     summary: "상품 수정",
     description: "옵션 배열을 보낼 경우, 기존 옵션을 모두 삭제하고 새로 생성합니다.",
     security: [{ bearerAuth: [] }],
@@ -97,7 +97,7 @@ registry.registerPath({
 registry.registerPath({
     method: "delete",
     path: "/api/admin/products/{id}",
-    tags: ["Admin Product"],
+    tags: ["Admin/Products"],
     summary: "상품 삭제",
     security: [{ bearerAuth: [] }],
     request: { params: productIdParamSchema },

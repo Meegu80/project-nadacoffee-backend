@@ -36,7 +36,7 @@ export type UpdateCategoryInput = z.infer<typeof updateCategoryBodySchema>;
 registry.registerPath({
     method: "post",
     path: "/api/admin/categories",
-    tags: ["Admin Category"],
+    tags: ["Admin/Categories"],
     summary: "카테고리 생성",
     security: [{ bearerAuth: [] }],
     request: {
@@ -67,7 +67,7 @@ registry.registerPath({
 registry.registerPath({
     method: "put",
     path: "/api/admin/categories/{id}",
-    tags: ["Admin Category"],
+    tags: ["Admin/Categories"],
     summary: "카테고리 수정",
     security: [{ bearerAuth: [] }],
     request: {
@@ -98,7 +98,7 @@ registry.registerPath({
 registry.registerPath({
     method: "delete",
     path: "/api/admin/categories/{id}",
-    tags: ["Admin Category"],
+    tags: ["Admin/Categories"],
     summary: "카테고리 삭제",
     security: [{ bearerAuth: [] }],
     request: {

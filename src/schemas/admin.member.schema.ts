@@ -68,7 +68,7 @@ export type UpdateMemberInput = z.infer<typeof updateMemberBodySchema>;
 registry.registerPath({
     method: "get",
     path: "/api/admin/members",
-    tags: ["Admin Member"],
+    tags: ["Admin/Members"],
     summary: "전체 회원 목록 조회",
     security: [{ bearerAuth: [] }],
     request: {
@@ -97,7 +97,7 @@ registry.registerPath({
 registry.registerPath({
     method: "get",
     path: "/api/admin/members/{id}",
-    tags: ["Admin Member"],
+    tags: ["Admin/Members"],
     summary: "회원 상세 조회",
     security: [{ bearerAuth: [] }],
     request: {
@@ -119,7 +119,7 @@ registry.registerPath({
 registry.registerPath({
     method: "post",
     path: "/api/admin/members",
-    tags: ["Admin Member"],
+    tags: ["Admin/Members"],
     summary: "회원 직접 생성",
     security: [{ bearerAuth: [] }],
     request: {
@@ -150,7 +150,7 @@ registry.registerPath({
 registry.registerPath({
     method: "put",
     path: "/api/admin/members/{id}",
-    tags: ["Admin Member"],
+    tags: ["Admin/Members"],
     summary: "회원 정보 수정",
     security: [{ bearerAuth: [] }],
     request: {
@@ -172,7 +172,7 @@ registry.registerPath({
 registry.registerPath({
     method: "delete",
     path: "/api/admin/members/{id}",
-    tags: ["Admin Member"],
+    tags: ["Admin/Members"],
     summary: "회원 삭제",
     security: [{ bearerAuth: [] }],
     request: {

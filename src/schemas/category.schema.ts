@@ -34,7 +34,7 @@ export const categoryIdParamsSchema = z.object({
 registry.registerPath({
     method: "get",
     path: "/api/categories",
-    tags: ["Category"],
+    tags: ["Categories"],
     summary: "전체 카테고리 목록 조회 (트리 구조)",
     description: "쇼핑몰 메뉴 구성을 위한 계층형 카테고리 데이터를 반환합니다.",
     responses: {
@@ -55,7 +55,7 @@ registry.registerPath({
 registry.registerPath({
     method: "get",
     path: "/api/categories/{id}",
-    tags: ["Category"],
+    tags: ["Categories"],
     summary: "카테고리 상세 조회",
     request: {
         params: categoryIdParamsSchema,
