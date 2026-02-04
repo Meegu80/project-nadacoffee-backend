@@ -8,7 +8,7 @@ const CartItemSchema = z.object({
     id: z.number().openapi({ example: 1 }),
     memberId: z.number().openapi({ example: 10 }),
     prodId: z.number().openapi({ example: 5 }),
-    optionId: z.number().openapi({ example: 12 }),
+    optionId: z.number().nullable().openapi({ example: 12 }),
     quantity: z.number().openapi({ example: 2 }),
     createdAt: z.date().openapi({ example: "2026-02-02T00:00:00Z" }),
     updatedAt: z.date().openapi({ example: "2026-02-02T00:00:00Z" }),
@@ -16,7 +16,7 @@ const CartItemSchema = z.object({
 
 export const createCartBodySchema = z.object({
     prodId: z.number().int().positive().openapi({ example: 5 }),
-    optionId: z.number().int().positive().openapi({ example: 12 }),
+    optionId: z.number().int().positive().nullable().optional().openapi({ example: 12 }),
     quantity: z.number().int().min(1).openapi({ example: 1 }),
 });
 

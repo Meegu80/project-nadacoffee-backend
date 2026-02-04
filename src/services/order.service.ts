@@ -11,19 +11,27 @@ export class OrderService {
 
             for (const item of data.items) {
                 const product = await tx.product.findUnique({ where: { id: item.prodId } });
-                const option = await tx.prodOption.findUnique({ where: { id: item.optionId } });
+                if (!product) throw new HttpException(404, "상품 정보를 찾을 수 없습니다.");
 
-                if (!product || !option)
-                    throw new HttpException(404, "상품 또는 옵션 정보를 찾을 수 없습니다.");
+                let price = product.basePrice;
+                let optionId: number | null = null;
 
-                const price = (product.basePrice + option.addPrice) * item.quantity;
-                totalProductPrice += price;
+                if (item.optionId) {
+                    const option = await tx.prodOption.findUnique({ where: { id: item.optionId } });
+                    if (!option)
+                        throw new HttpException(404, "선택한 옵션 정보를 찾을 수 없습니다.");
+
+                    price += option.addPrice; // 옵션 추가금 합산
+                    optionId = option.id;
+                }
+
+                totalProductPrice += price * item.quantity;
 
                 itemsToCreate.push({
                     prodId: item.prodId,
-                    optionId: item.optionId,
+                    optionId: optionId, // null 가능
                     quantity: item.quantity,
-                    salePrice: product.basePrice + option.addPrice,
+                    salePrice: price, // 계산된 단가 저장
                 });
             }
 
@@ -82,15 +90,21 @@ export class OrderService {
             if (!order) throw new HttpException(404, "해당 주문을 찾을 수 없습니다.");
 
             for (const item of order.orderItems) {
-                const option = await tx.prodOption.findUnique({ where: { id: item.optionId } });
-                if (!option || option.stockQty < item.quantity) {
-                    throw new HttpException(400, `상품 재고가 부족합니다.`);
-                }
+                if (item.optionId) {
+                    const option = await tx.prodOption.findUnique({ where: { id: item.optionId } });
 
-                await tx.prodOption.update({
-                    where: { id: item.optionId },
-                    data: { stockQty: { decrement: item.quantity } },
-                });
+                    if (!option || option.stockQty < item.quantity) {
+                        throw new HttpException(
+                            400,
+                            `상품([옵션] ${option?.name})의 재고가 부족합니다.`,
+                        );
+                    }
+
+                    await tx.prodOption.update({
+                        where: { id: item.optionId },
+                        data: { stockQty: { decrement: item.quantity } },
+                    });
+                }
             }
 
             // 포인트 로그 기록
@@ -211,10 +225,13 @@ export class OrderService {
             // A. 재고 복구 (결제완료 상태였을 때만)
             if (order.status === "결제완료") {
                 for (const item of order.orderItems) {
-                    await tx.prodOption.update({
-                        where: { id: item.optionId },
-                        data: { stockQty: { increment: item.quantity } }, // 재고 증가
-                    });
+                    // 옵션이 있는 상품만 재고 복구
+                    if (item.optionId) {
+                        await tx.prodOption.update({
+                            where: { id: item.optionId },
+                            data: { stockQty: { increment: item.quantity } },
+                        });
+                    }
                 }
             }
 

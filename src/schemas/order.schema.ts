@@ -7,7 +7,7 @@ extendZodWithOpenApi(z);
 
 const OrderItemInputSchema = z.object({
     prodId: z.number().int().positive(),
-    optionId: z.number().int().positive(),
+    optionId: z.number().int().positive().nullable().optional(),
     quantity: z.number().int().min(1),
 });
 
@@ -41,10 +41,12 @@ const OrderItemDetailSchema = z.object({
         name: z.string(),
         imageUrl: z.string().nullable(),
     }),
-    option: z.object({
-        name: z.string(),
-        value: z.string(),
-    }),
+    option: z
+        .object({
+            name: z.string(),
+            value: z.string(),
+        })
+        .nullable(),
 });
 
 export const OrderDetailSchema = z

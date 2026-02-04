@@ -4,12 +4,19 @@ import { prisma } from "../config/prisma";
 export class AdminOrderService {
     async getAllOrders(page: number, limit: number) {
         const skip = (page - 1) * limit;
+
         const [total, items] = await Promise.all([
             prisma.order.count(),
             prisma.order.findMany({
                 include: {
                     member: { select: { email: true, name: true } },
-                    orderItems: true,
+                    orderItems: {
+                        include: {
+                            product: { select: { name: true, imageUrl: true } },
+                            option: { select: { name: true, value: true } },
+                        },
+                    },
+                    payments: true,
                 },
                 orderBy: { createdAt: "desc" },
                 skip,
@@ -19,7 +26,12 @@ export class AdminOrderService {
 
         return {
             data: items,
-            pagination: { total, totalPages: Math.ceil(total / limit), currentPage: page, limit },
+            pagination: {
+                total,
+                totalPages: Math.ceil(total / limit),
+                currentPage: page,
+                limit,
+            },
         };
     }
 

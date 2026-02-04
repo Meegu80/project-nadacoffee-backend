@@ -129,12 +129,12 @@ model Cart {
   updatedAt DateTime @updatedAt
   quantity  Int      @default(1)
 
-  memberId Int        @map("member_id")
-  member   Member     @relation(fields: [memberId], references: [id], onDelete: Cascade)
-  prodId   Int        @map("prod_id")
-  product  Product    @relation(fields: [prodId], references: [id], onDelete: Cascade)
-  optionId Int        @map("option_id")
-  option   ProdOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  memberId Int         @map("member_id")
+  member   Member      @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  prodId   Int         @map("prod_id")
+  product  Product     @relation(fields: [prodId], references: [id], onDelete: Cascade)
+  optionId Int?        @map("option_id")
+  option   ProdOption? @relation(fields: [optionId], references: [id], onDelete: Cascade)
 
   @@map("carts")
 }
@@ -172,12 +172,12 @@ model OrderItem {
   quantity  Int
   salePrice Int      @map("sale_price")
 
-  orderId  Int        @map("order_id")
-  order    Order      @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  prodId   Int        @map("prod_id")
-  product  Product    @relation(fields: [prodId], references: [id])
-  optionId Int        @map("option_id")
-  option   ProdOption @relation(fields: [optionId], references: [id])
+  orderId  Int         @map("order_id")
+  order    Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  prodId   Int         @map("prod_id")
+  product  Product     @relation(fields: [prodId], references: [id])
+  optionId Int?        @map("option_id")
+  option   ProdOption? @relation(fields: [optionId], references: [id])
 
   @@map("order_items")
 }

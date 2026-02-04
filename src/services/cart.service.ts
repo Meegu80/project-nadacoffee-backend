@@ -3,10 +3,16 @@ import { prisma } from "../config/prisma";
 export class CartService {
     async addToCart(
         memberId: number,
-        data: { prodId: number; optionId: number; quantity: number },
+        data: { prodId: number; optionId?: number | null; quantity: number },
     ) {
+        const optionId = data.optionId ?? null;
+
         const existing = await prisma.cart.findFirst({
-            where: { memberId, prodId: data.prodId, optionId: data.optionId },
+            where: {
+                memberId,
+                prodId: data.prodId,
+                optionId: optionId,
+            },
         });
 
         if (existing) {
@@ -17,7 +23,12 @@ export class CartService {
         }
 
         return prisma.cart.create({
-            data: { memberId, ...data },
+            data: {
+                memberId,
+                prodId: data.prodId,
+                quantity: data.quantity,
+                optionId: optionId,
+            },
         });
     }
 
@@ -31,7 +42,7 @@ export class CartService {
 
     async updateQuantity(id: number, memberId: number, quantity: number) {
         return prisma.cart.update({
-            where: { id, memberId }, // 본인 것인지 확인
+            where: { id, memberId },
             data: { quantity },
         });
     }
