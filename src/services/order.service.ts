@@ -132,7 +132,7 @@ export class OrderService {
             });
 
             return await tx.order.update({
-                where: { id: orderId },
+                where: { id: dbOrderId },
                 data: { status: "결제완료" },
             });
         });
