@@ -2,6 +2,7 @@ import { z } from "zod";
 import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
 import { registry } from "../config/openApi";
 import { createPaginatedResponseSchema, PaginationQuerySchema } from "./common.schema";
+import { OrderStatus } from "@prisma/client";
 
 extendZodWithOpenApi(z);
 
@@ -53,7 +54,7 @@ export const OrderDetailSchema = z
     .object({
         id: z.number(),
         totalPrice: z.number(),
-        status: z.string(),
+        status: z.enum(OrderStatus),
         createdAt: z.date(),
         recipientName: z.string(),
         recipientPhone: z.string(),

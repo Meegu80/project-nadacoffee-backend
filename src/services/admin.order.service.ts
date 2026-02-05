@@ -1,5 +1,6 @@
 import { HttpException } from "../utils/exception.utils";
 import { prisma } from "../config/prisma";
+import { OrderStatus } from "@prisma/client";
 
 export class AdminOrderService {
     async getAllOrders(page: number, limit: number) {
@@ -54,7 +55,7 @@ export class AdminOrderService {
 
         const updateData: any = { ...data };
         if (data.trackingNumber && !order.trackingNumber) {
-            updateData.status = "배송중";
+            updateData.status = OrderStatus.SHIPPING;
         }
 
         return await prisma.order.update({

@@ -25,6 +25,17 @@ enum MemberStatus {
   WITHDRAWN
 }
 
+enum OrderStatus {
+  PENDING
+  PAYMENT_COMPLETED
+  PREPARING
+  SHIPPING
+  DELIVERED
+  PURCHASE_COMPLETED
+  CANCELLED
+  RETURNED
+}
+
 enum PaymentStatus {
   PAID
   CANCELLED
@@ -140,21 +151,21 @@ model Cart {
 }
 
 model Order {
-  id               Int      @id @default(autoincrement())
-  createdAt        DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime @updatedAt
-  totalPrice       Int      @map("total_price")
-  status           String   @default("결제대기") @db.VarChar(20)
-  recipientName    String   @map("recipient_name") @db.VarChar(50)
-  recipientPhone   String   @map("recipient_phone") @db.VarChar(20)
-  zipCode          String   @map("zip_code") @db.VarChar(10)
-  address1         String   @map("base_addr") @db.VarChar(255)
-  address2         String   @map("detail_addr") @db.VarChar(255)
-  deliveryMessage  String?  @map("delivery_message") @db.VarChar(500)
-  entrancePassword String?  @map("entrance_password") @db.VarChar(100)
-  usedPoint        Int      @default(0) @map("used_point")
-  deliveryCompany  String?  @map("delivery_company") @db.VarChar(50)
-  trackingNumber   String?  @map("tracking_number") @db.VarChar(100)
+  id               Int         @id @default(autoincrement())
+  createdAt        DateTime    @default(now()) @map("created_at")
+  updatedAt        DateTime    @updatedAt
+  totalPrice       Int         @map("total_price")
+  status           OrderStatus @default(PENDING)
+  recipientName    String      @map("recipient_name") @db.VarChar(50)
+  recipientPhone   String      @map("recipient_phone") @db.VarChar(20)
+  zipCode          String      @map("zip_code") @db.VarChar(10)
+  address1         String      @map("base_addr") @db.VarChar(255)
+  address2         String      @map("detail_addr") @db.VarChar(255)
+  deliveryMessage  String?     @map("delivery_message") @db.VarChar(500)
+  entrancePassword String?     @map("entrance_password") @db.VarChar(100)
+  usedPoint        Int         @default(0) @map("used_point")
+  deliveryCompany  String?     @map("delivery_company") @db.VarChar(50)
+  trackingNumber   String?     @map("tracking_number") @db.VarChar(100)
 
   memberId   Int         @map("member_id")
   member     Member      @relation(fields: [memberId], references: [id])

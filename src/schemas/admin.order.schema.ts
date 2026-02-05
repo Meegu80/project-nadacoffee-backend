@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { registry } from "../config/openApi";
 import { createPaginatedResponseSchema, PaginationQuerySchema } from "./common.schema";
+import { OrderStatus } from "@prisma/client";
 
 const AdminOrderItemSchema = z.object({
     id: z.number(),
@@ -23,7 +24,7 @@ export const AdminOrderSchema = z
     .object({
         id: z.number(),
         totalPrice: z.number(),
-        status: z.string(),
+        status: z.enum(OrderStatus),
         usedPoint: z.number(),
         recipientName: z.string(),
         recipientPhone: z.string(),
@@ -33,6 +34,8 @@ export const AdminOrderSchema = z
         deliveryMessage: z.string().nullable(),
         entrancePassword: z.string().nullable(),
         createdAt: z.date(),
+        deliveryCompany: z.string().nullable().optional(),
+        trackingNumber: z.string().nullable().optional(),
         member: z.object({
             email: z.string(),
             name: z.string(),
@@ -46,9 +49,7 @@ const PaginatedAdminOrderResponseSchema = createPaginatedResponseSchema(AdminOrd
 
 export const updateOrderBodySchema = z
     .object({
-        status: z
-            .enum(["결제대기", "결제완료", "배송준비", "배송중", "배송완료", "취소완료"])
-            .optional(),
+        status: z.enum(OrderStatus).optional(),
         deliveryMessage: z.string().optional(),
         deliveryCompany: z.string().optional().openapi({ example: "CJ대한통운" }),
         trackingNumber: z.string().optional().openapi({ example: "1234567890" }),

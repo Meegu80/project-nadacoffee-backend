@@ -1,7 +1,7 @@
 import axios from "axios";
 import { HttpException } from "../utils/exception.utils";
 import { prisma } from "../config/prisma";
-import { PaymentStatus } from "@prisma/client";
+import { OrderStatus, PaymentStatus } from "@prisma/client";
 
 export class OrderService {
     async createOrder(memberId: number, data: any) {
@@ -42,6 +42,7 @@ export class OrderService {
                 data: {
                     memberId,
                     totalPrice: finalPrice,
+                    status: OrderStatus.PENDING,
                     usedPoint: data.usePoint,
                     recipientName: data.recipientName,
                     recipientPhone: data.recipientPhone,
@@ -134,7 +135,7 @@ export class OrderService {
 
             return await tx.order.update({
                 where: { id: dbOrderId },
-                data: { status: "결제완료" },
+                data: { status: OrderStatus.PAYMENT_COMPLETED },
             });
         });
     }
@@ -194,8 +195,14 @@ export class OrderService {
 
         if (!order) throw new HttpException(404, "주문 내역을 찾을 수 없습니다.");
 
-        // 배송 시작 이후에는 취소 불가 (정책에 따라 조정)
-        if (["배송중", "배송완료", "취소완료"].includes(order.status)) {
+        const nonCancellableStatus: OrderStatus[] = [
+            OrderStatus.SHIPPING,
+            OrderStatus.DELIVERED,
+            OrderStatus.CANCELLED,
+            OrderStatus.RETURNED,
+        ];
+
+        if (nonCancellableStatus.includes(order.status)) {
             throw new HttpException(400, "현재 상태에서는 주문을 취소할 수 없습니다.");
         }
 
@@ -226,7 +233,7 @@ export class OrderService {
         // 2. DB 후처리 (상태 변경, 재고 복구, 포인트 환불)
         return await prisma.$transaction(async tx => {
             // A. 재고 복구 (결제완료 상태였을 때만)
-            if (order.status === "결제완료") {
+            if (order.status === OrderStatus.PAYMENT_COMPLETED) {
                 for (const item of order.orderItems) {
                     // 옵션이 있는 상품만 재고 복구
                     if (item.optionId) {
@@ -261,7 +268,7 @@ export class OrderService {
             // D. 주문 상태 변경
             return await tx.order.update({
                 where: { id: orderId },
-                data: { status: "취소완료" },
+                data: { status: OrderStatus.CANCELLED },
             });
         });
     }
