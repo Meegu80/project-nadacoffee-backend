@@ -58,7 +58,7 @@ export class OrderService {
 
     async confirmPayment(
         memberId: number,
-        payload: { orderId: number; paymentKey: string; amount: number },
+        payload: { orderId: string; paymentKey: string; amount: number },
     ) {
         const { orderId, paymentKey, amount } = payload;
 
@@ -68,7 +68,7 @@ export class OrderService {
 
             await axios.post(
                 "https://api.tosspayments.com/v1/payments/confirm",
-                { orderId: `ORDER_${orderId}`, amount, paymentKey },
+                { orderId: orderId, amount, paymentKey },
                 {
                     headers: {
                         Authorization: `Basic ${basicAuth}`,
@@ -81,9 +81,11 @@ export class OrderService {
             throw new HttpException(400, "결제 승인 과정에서 오류가 발생했습니다.");
         }
 
+        const dbOrderId = Number(orderId.split("_")[1]);
+
         return await prisma.$transaction(async tx => {
             const order = await tx.order.findUnique({
-                where: { id: orderId, memberId },
+                where: { id: dbOrderId, memberId },
                 include: { orderItems: true },
             });
 

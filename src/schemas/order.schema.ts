@@ -27,7 +27,7 @@ export const createOrderBodySchema = z
 
 export const confirmOrderBodySchema = z
     .object({
-        orderId: z.number().int(),
+        orderId: z.string().openapi({ example: "ORDER_35_1770261985770" }),
         paymentKey: z.string(),
         amount: z.number().int(),
     })
