@@ -34,7 +34,7 @@ export function generateOpenApiDocs() {
             },
             {
                 name: "관리자 API",
-                tags: ["Admin/Members", "Admin/Categories", "Admin/Products", "Admin/Orders"],
+                tags: ["Admin/Members", "Admin/Categories", "Admin/Products", "Admin/Orders", "Admin/Points"],
             },
         ],
     });

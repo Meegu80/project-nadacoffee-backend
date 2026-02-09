@@ -65,10 +65,9 @@ export class OrderService {
 
         try {
             const secretKey = process.env.TOSS_SECRET_KEY;
-            console.log(secretKey, orderId);
             const encryptedSecretKey = "Basic " + Buffer.from(secretKey + ":").toString("base64");
 
-            const result = await axios.post(
+            await axios.post(
                 "https://api.tosspayments.com/v1/payments/confirm",
                 { orderId: orderId, amount, paymentKey },
                 {
