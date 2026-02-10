@@ -23,6 +23,8 @@ import orderRoute from "./routes/order.route";
 import pointRoute from "./routes/point.route";
 import adminOrderRoute from "./routes/admin.order.route";
 import adminPointRoute from "./routes/admin.point.route";
+import reviewRoute from "./routes/review.route";
+import adminReviewRoute from "./routes/admin.review.route";
 
 const app = express();
 const PORT = process.env.PORT || 4101;
@@ -55,11 +57,13 @@ app.use("/api/products", productRoute);
 app.use("/api/cart", cartRoute);
 app.use("/api/orders", orderRoute);
 app.use("/api/points", pointRoute);
+app.use("/api/reviews", reviewRoute);
 app.use("/api/admin", adminMemberRoute);
 app.use("/api/admin/categories", adminCategoryRoute);
 app.use("/api/admin/products", adminProductRoute);
 app.use("/api/admin/orders", adminOrderRoute);
 app.use("/api/admin/points", adminPointRoute);
+app.use("/api/admin/reviews", adminReviewRoute);
 
 app.use(errorMiddleware);
 

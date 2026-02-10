@@ -29,12 +29,20 @@ export function generateOpenApiDocs() {
                     "Cart",
                     "Orders",
                     "Points",
+                    "Reviews",
                     "Uploads",
                 ],
             },
             {
                 name: "관리자 API",
-                tags: ["Admin/Members", "Admin/Categories", "Admin/Products", "Admin/Orders", "Admin/Points"],
+                tags: [
+                    "Admin/Members",
+                    "Admin/Categories",
+                    "Admin/Products",
+                    "Admin/Orders",
+                    "Admin/Points",
+                    "Admin/Reviews",
+                ],
             },
         ],
     });

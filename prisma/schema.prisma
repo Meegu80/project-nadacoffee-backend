@@ -172,6 +172,7 @@ model Order {
   orderItems OrderItem[]
   payments   Payment[]
   pointLogs  PointLog[]
+  reviews    Review[]
 
   @@map("orders")
 }
@@ -230,14 +231,27 @@ model Review {
   updatedAt DateTime @updatedAt
   rating    Int      @db.TinyInt
   content   String   @db.Text
-  imageUrl  String?  @map("image_url") @db.Text
 
-  memberId Int     @map("member_id")
-  member   Member  @relation(fields: [memberId], references: [id])
-  prodId   Int     @map("prod_id")
-  product  Product @relation(fields: [prodId], references: [id])
+  memberId     Int           @map("member_id")
+  member       Member        @relation(fields: [memberId], references: [id])
+  prodId       Int           @map("prod_id")
+  product      Product       @relation(fields: [prodId], references: [id])
+  orderId      Int           @map("order_id")
+  order        Order         @relation(fields: [orderId], references: [id])
+  reviewImages ReviewImage[]
 
+  @@unique([orderId, prodId])
   @@map("reviews")
+}
+
+model ReviewImage {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt
+  url       String
+
+  reviewId Int
+  review   Review @relation(fields: [reviewId], references: [id])
 }
 
 model Inquiry {
