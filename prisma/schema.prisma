@@ -42,6 +42,13 @@ enum PaymentStatus {
   FAILED
 }
 
+enum InquiryType {
+  COMPLIMENT // 칭찬
+  COMPLAINT // 불만
+  SUGGESTION // 제안
+  INQUIRY // 문의
+}
+
 enum InquiryStatus {
   PENDING
   ANSWERED
@@ -258,16 +265,28 @@ model Inquiry {
   id         Int           @id @default(autoincrement())
   createdAt  DateTime      @default(now()) @map("created_at")
   updatedAt  DateTime      @updatedAt
+  type       InquiryType   @default(INQUIRY)
   title      String        @db.VarChar(255)
   content    String        @map("q_content") @db.Text
   answer     String?       @map("ans_content") @db.Text
   status     InquiryStatus @default(PENDING)
   answeredAt DateTime?     @map("answered_at")
 
-  memberId Int    @map("member_id")
-  member   Member @relation(fields: [memberId], references: [id])
+  memberId Int            @map("member_id")
+  member   Member         @relation(fields: [memberId], references: [id])
+  images   InquiryImage[]
 
   @@map("inquiries")
+}
+
+model InquiryImage {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  url       String
+
+  inquiryId Int
+  inquiry   Inquiry @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
 }
 
 model Event {
