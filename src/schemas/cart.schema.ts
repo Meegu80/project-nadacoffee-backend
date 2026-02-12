@@ -4,14 +4,39 @@ import { registry } from "../config/openApi";
 
 extendZodWithOpenApi(z);
 
+const CartProductSchema = z.object({
+    id: z.number(),
+    name: z.string(),
+    basePrice: z.number(),
+    imageUrl: z.string().nullable(),
+    images: z
+        .array(
+            z.object({
+                id: z.number(),
+                url: z.string(),
+            }),
+        )
+        .optional(),
+});
+
+const CartOptionSchema = z.object({
+    id: z.number(),
+    name: z.string(),
+    value: z.string(),
+    addPrice: z.number(),
+});
+
 const CartItemSchema = z.object({
     id: z.number().openapi({ example: 1 }),
-    memberId: z.number().openapi({ example: 10 }),
-    prodId: z.number().openapi({ example: 5 }),
-    optionId: z.number().nullable().openapi({ example: 12 }),
+    memberId: z.number(),
     quantity: z.number().openapi({ example: 2 }),
-    createdAt: z.date().openapi({ example: "2026-02-02T00:00:00Z" }),
-    updatedAt: z.date().openapi({ example: "2026-02-02T00:00:00Z" }),
+    createdAt: z.date(),
+    updatedAt: z.date(),
+
+    prodId: z.number(),
+    optionId: z.number().nullable(),
+    product: CartProductSchema,
+    option: CartOptionSchema.nullable(),
 });
 
 export const createCartBodySchema = z.object({

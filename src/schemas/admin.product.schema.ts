@@ -25,8 +25,14 @@ export const createProductBodySchema = z.object({
     basePrice: z.number().min(0).openapi({ example: 12000 }),
     imageUrl: z.string().nullable().optional().openapi({ example: "https://..." }),
     isDisplay: z.boolean().default(true).openapi({ example: true }),
-    // 옵션 배열 (선택사항)
     options: z.array(ProductOptionInputSchema).optional(),
+    images: z
+        .array(z.string())
+        .optional()
+        .openapi({
+            example: ["https://s3.../img1.jpg", "https://s3.../img2.jpg"],
+            description: "상세/추가 이미지 URL 리스트",
+        }),
 });
 
 // [PUT] 상품 수정 바디
@@ -37,8 +43,8 @@ export const updateProductBodySchema = z.object({
     basePrice: z.number().optional(),
     imageUrl: z.string().nullable().optional(),
     isDisplay: z.boolean().optional(),
-    // 수정 시 옵션 배열이 존재하면 -> "기존 옵션 삭제 후 재등록" 처리
     options: z.array(ProductOptionInputSchema).optional(),
+    images: z.array(z.string()).optional(),
 });
 
 // [PATH] ID 파라미터

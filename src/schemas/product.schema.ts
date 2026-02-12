@@ -17,6 +17,11 @@ const ProductOptionSchema = z.object({
     stockQty: z.number().openapi({ example: 50 }),
 });
 
+const ProductImageSchema = z.object({
+    id: z.number().openapi({ example: 1 }),
+    url: z.string().openapi({ example: "https://bucket.s3.com/detail_image_1.jpg" }),
+});
+
 const CategorySimpleSchema = z.object({
     id: z.number(),
     name: z.string(),
@@ -33,6 +38,10 @@ export const ProductResponseSchema = z
         catId: z.number().openapi({ example: 10 }),
         category: CategorySimpleSchema.optional(),
         options: z.array(ProductOptionSchema).optional(),
+        images: z
+            .array(ProductImageSchema)
+            .optional()
+            .openapi({ description: "상품 상세/추가 이미지 리스트" }),
         createdAt: z.iso.datetime(),
         updatedAt: z.iso.datetime(),
     })

@@ -9,6 +9,8 @@ export class AdminProductService {
         const category = await prisma.category.findUnique({ where: { id: data.catId } });
         if (!category) throw new HttpException(404, "지정된 카테고리가 존재하지 않습니다.");
 
+        const imageCreateData = data.images?.map(url => ({ url })) || [];
+
         return await prisma.product.create({
             data: {
                 catId: data.catId,
@@ -21,8 +23,11 @@ export class AdminProductService {
                 options: {
                     create: data.options || [],
                 },
+                images: {
+                    create: imageCreateData,
+                },
             },
-            include: { options: true },
+            include: { options: true, images: true },
         });
     }
 
@@ -31,7 +36,7 @@ export class AdminProductService {
         const existingProduct = await prisma.product.findUnique({ where: { id } });
         if (!existingProduct) throw new HttpException(404, "수정하려는 상품이 존재하지 않습니다.");
 
-        const { options, ...productData } = data;
+        const { options, images, ...productData } = data;
         const updateData: any = { ...productData };
 
         // 옵션 배열이 전달된 경우: 기존 옵션 싹 지우고 새로 생성 (Replace)
@@ -39,6 +44,13 @@ export class AdminProductService {
             updateData.options = {
                 deleteMany: {}, // 기존 옵션 전체 삭제
                 create: options, // 새 옵션 생성
+            };
+        }
+
+        if (images) {
+            updateData.images = {
+                deleteMany: {}, // 기존 이미지 전체 삭제
+                create: images.map(url => ({ url })), // 새 이미지 생성
             };
         }
 

@@ -38,7 +38,11 @@ export class ProductService {
                 orderBy,
                 include: {
                     category: { select: { id: true, name: true } },
-                    options: true, // 목록에서도 옵션 정보가 필요할 수 있음
+                    options: true,
+                    images: {
+                        select: { id: true, url: true },
+                        orderBy: { id: "asc" },
+                    },
                 },
             }),
         ]);
@@ -56,14 +60,16 @@ export class ProductService {
 
     // 상품 상세 조회
     async getProductById(id: number) {
-        // [수정] 상세 조회에서도 isDisplay 강제 체크를 제거했습니다.
-        // ID만 맞으면 무조건 조회됩니다.
         const product = await prisma.product.findUnique({
             where: { id },
             include: {
                 category: { select: { id: true, name: true } },
                 options: {
                     orderBy: { addPrice: "asc" },
+                },
+                images: {
+                    select: { id: true, url: true },
+                    orderBy: { id: "asc" },
                 },
             },
         });

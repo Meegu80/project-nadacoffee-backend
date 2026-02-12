@@ -114,12 +114,13 @@ model Product {
   imageUrl  String?  @map("image_url")
   isDisplay Boolean  @default(true) @map("is_display")
 
-  catId      Int          @map("cat_id")
-  category   Category     @relation(fields: [catId], references: [id])
+  catId      Int            @map("cat_id")
+  category   Category       @relation(fields: [catId], references: [id])
   options    ProdOption[]
   cartItems  Cart[]
   orderItems OrderItem[]
   reviews    Review[]
+  images     ProductImage[]
 
   @@map("products")
 }
@@ -139,6 +140,16 @@ model ProdOption {
   orderItems OrderItem[]
 
   @@map("prod_options")
+}
+
+model ProductImage {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt
+  url       String
+
+  product   Product? @relation(fields: [productId], references: [id])
+  productId Int?
 }
 
 model Cart {

@@ -35,7 +35,17 @@ export class CartService {
     async getCartItems(memberId: number) {
         return prisma.cart.findMany({
             where: { memberId },
-            include: { product: true, option: true },
+            include: {
+                product: {
+                    include: {
+                        images: {
+                            select: { id: true, url: true },
+                            orderBy: { id: "asc" },
+                        },
+                    },
+                },
+                option: true,
+            },
             orderBy: { createdAt: "desc" },
         });
     }
